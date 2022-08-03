@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be8c43f7b3c9e4d488d5b8c3a63c39ac, type: 3}
+  m_Name: Qusetion 1
+  m_EditorClassIdentifier: 
+  question: "\uB2E4\uC74C\uC911 \uC790\uB8CC\uD615\uC774 \uB9DE\uB294 \uAC83\uC740?"
+  answers:
+  - strim
+  - bouble
+  - folat
+  - int
+  correctAnswerIndex: 3
