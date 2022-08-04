@@ -19,4 +19,4 @@ MonoBehaviour:
   - float
   - int
   - double
-  correctAnswerIndex: 1
+  correctAnswerIndex: 0

@@ -8,11 +8,12 @@ public class Quiz : MonoBehaviour
 {
     [Header("Question")]
     [SerializeField] TextMeshProUGUI questionTxt;
-    [SerializeField] QuestionSO question;
+    [SerializeField] List<QuestionSO> questionList = new List<QuestionSO>();
+    QuestionSO currentQuestion;
 
     [Header("Answer")]
     [SerializeField] GameObject[] answerButtons;
-    bool hasAnsweredEarly;
+    bool hasAnsweredEarly = true;
 
     [Header("Button Image")]
     [SerializeField] Sprite defaultAnswerSprite;
@@ -22,12 +23,22 @@ public class Quiz : MonoBehaviour
     [SerializeField] Image timerImage;
     Timer timer;
 
+    [Header("Score")]
+    [SerializeField] TextMeshProUGUI scoreTxt;
+    Score score;
+
+    [Header("ProgressBar")]
+    [SerializeField] Slider progressBar;
+
+    public bool isComplete;
+
     void Start()
     {
         timer = FindObjectOfType<Timer>();
+        score = FindObjectOfType<Score>();
 
-        //DisplayQuestion();
-        GetNextQuestion();
+        progressBar.maxValue = questionList.Count;
+        progressBar.value = 0;
     }
 
     private void Update()
@@ -48,20 +59,31 @@ public class Quiz : MonoBehaviour
 
     void DisplayQuestion()
     {
-        questionTxt.text = question.Question;
+        questionTxt.text = currentQuestion.Question;
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
             TextMeshProUGUI buttonTxt = answerButtons[i].GetComponentInChildren<TextMeshProUGUI>();
-            buttonTxt.text = question.GetAnswers(i);
+            buttonTxt.text = currentQuestion.GetAnswers(i);
         }
     }
 
     void GetNextQuestion()
     {
-        SetButtonState(true);
-        SetDefaultButtonSprite();
-        DisplayQuestion();
+        if(questionList.Count > 0)
+        {
+            SetButtonState(true);
+            SetDefaultButtonSprite();
+            GetRandomQuestion();
+            DisplayQuestion();
+            progressBar.value++;
+            score.IncrementQuestionSeen();
+        }
+        else
+        {
+            isComplete = true;
+            return;
+        }
     }
 
     void SetDefaultButtonSprite()
@@ -79,23 +101,25 @@ public class Quiz : MonoBehaviour
         DisplayAnswer(index);
         SetButtonState(false);
         timer.CancelTimer();
+        scoreTxt.text = "Score : " + score.CalculateScore() + "%";
     }
 
     void DisplayAnswer(int index)
     {
         Image buttonImage;
 
-        if (index == question.CorrectAnswerIndex)
+        if (index == currentQuestion.CorrectAnswerIndex)
         {
             questionTxt.text = "정답입니다";
             buttonImage = answerButtons[index].GetComponent<Image>();
             buttonImage.sprite = correctAnswerSprite;
+            score.IncrementCorrentAnswers();
         }
         else
         {
-            string correctAnswer = question.GetAnswers(question.CorrectAnswerIndex);
+            string correctAnswer = currentQuestion.GetAnswers(currentQuestion.CorrectAnswerIndex);
             questionTxt.text = "틀렸습니다 \n 답은 " + correctAnswer;
-            buttonImage = answerButtons[question.CorrectAnswerIndex].GetComponent<Image>();
+            buttonImage = answerButtons[currentQuestion.CorrectAnswerIndex].GetComponent<Image>();
             buttonImage.sprite = correctAnswerSprite;
         }
     }
@@ -106,6 +130,18 @@ public class Quiz : MonoBehaviour
         {
             Button button = answerButtons[i].GetComponent<Button>();
             button.interactable = state;
+        }
+    }
+
+    void GetRandomQuestion()
+    {
+        int index = Random.Range(0, questionList.Count);
+        currentQuestion = questionList[index];
+
+        // questionList.RemoveAt(index);
+        if(questionList.Contains(currentQuestion))
+        {
+            questionList.Remove(currentQuestion);
         }
     }
 }

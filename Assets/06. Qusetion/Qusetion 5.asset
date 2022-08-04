@@ -20,4 +20,4 @@ MonoBehaviour:
   - Private
   - Static
   - SerializeField
-  correctAnswerIndex: 4
+  correctAnswerIndex: 3
